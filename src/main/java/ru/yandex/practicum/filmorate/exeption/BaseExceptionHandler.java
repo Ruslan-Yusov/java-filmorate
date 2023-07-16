@@ -20,7 +20,7 @@ public class BaseExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorDto> handleException(ResourceNotFoundException ex) {
-        return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+        return handleException(ex, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ResourceAlreadyExistExeption.class)

@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.api.dto.FilmDtoForAdd;
 import ru.yandex.practicum.filmorate.api.dto.FilmDtoForRead;
 import ru.yandex.practicum.filmorate.api.dto.UserDtoForAdd;
 import ru.yandex.practicum.filmorate.api.dto.UserDtoForRead;
+import ru.yandex.practicum.filmorate.entity.FilmStorage;
+import ru.yandex.practicum.filmorate.entity.UserStorage;
 import ru.yandex.practicum.filmorate.exeption.BadRequestException;
 import ru.yandex.practicum.filmorate.exeption.ResourceAlreadyExistExeption;
 import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
@@ -31,6 +33,12 @@ class FilmorateApplicationTests {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FilmStorage filmStorage;
+
+    @Autowired
+    private UserStorage userStorage;
 
     private static final LocalDate DATE_HAMSTER = LocalDate.parse("1987-08-04", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
@@ -71,8 +79,8 @@ class FilmorateApplicationTests {
         expectetUserDtoForRead = UserDtoForRead.builder().id(1).email("byte@yandex.ru").login("hamsterbyte1919").name("Byte").birthday(DATE_HAMSTER).build();
 
         expectetUpdateUserDtoForUpdate = UserDtoForRead.builder().id(1).email("byte@mail.ru").login("hamsterbyte1919").name("Byte").birthday(DATE_HAMSTER).build();
-        filmService.reset();
-        userService.reset();
+        filmStorage.reset();
+        userStorage.reset();
     }
 
     @Test
@@ -84,12 +92,12 @@ class FilmorateApplicationTests {
         Assertions.assertNotNull(variable);
         Assertions.assertEquals(expectetFilmDtoForRead, variable);
 
-        List<Film> innerList = filmService.getItems();
+        List<Film> innerList = filmStorage.getAll();
         Assertions.assertNotNull(innerList);
         Assertions.assertNotEquals(0, innerList.size());
         Assertions.assertEquals(expectetFilm, innerList.get(0));
 
-        List<FilmDtoForRead> filmList = filmService.getAllFilms();
+        List<FilmDtoForRead> filmList = filmService.getAllFilmsDto();
         Assertions.assertEquals(1, filmList.size());
         Assertions.assertEquals(expectetFilmDtoForRead, filmList.get(0));
 
@@ -115,6 +123,16 @@ class FilmorateApplicationTests {
     }
 
     @Test
+    @DisplayName("Тест на удаление фильма")
+    void testDeleteFilms() {
+        FilmDtoForRead variable = filmService.addFilm(expectetFilmDtoForAdd);
+        Assertions.assertEquals(1, filmStorage.getAll().size());
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> filmService.deleteFilm(2));
+        filmService.deleteFilm(1);
+        Assertions.assertEquals(0, filmStorage.getAll().size());
+    }
+
+    @Test
     @DisplayName("Проверка позитивного сценария пользователя")
     void testUser() {
         Assertions.assertEquals(0, userService.getAllUsers().size());
@@ -123,7 +141,7 @@ class FilmorateApplicationTests {
         Assertions.assertNotNull(variable);
         Assertions.assertEquals(expectetUserDtoForRead, variable);
 
-        List<User> innerList = userService.getItems();
+        List<User> innerList = userStorage.getAll();
         Assertions.assertNotNull(innerList);
         Assertions.assertNotEquals(0, innerList.size());
         Assertions.assertEquals(expectetUser, innerList.get(0));
@@ -161,5 +179,15 @@ class FilmorateApplicationTests {
         expectetUserDtoForAdd.setName("");
         UserDtoForRead userBlankName = userService.addUsers(expectetUserDtoForAdd);
         Assertions.assertEquals(expectetUserDtoForRead.getLogin(), userBlankName.getName());
+    }
+
+    @Test
+    @DisplayName("Тест на удаление пользователя")
+    void testDeleteUser() {
+        UserDtoForRead variable = userService.addUsers(expectetUserDtoForAdd);
+        Assertions.assertEquals(1, userStorage.getAll().size());
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(2));
+        userService.deleteUser(1);
+        Assertions.assertEquals(0, userStorage.getAll().size());
     }
 }

@@ -1,9 +1,7 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.entity;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.model.GeneratableId;
 
 import java.util.ArrayList;
@@ -11,16 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Базовый сервис.
+ * Базовый репозиторий.
  */
 
-@Getter
 @NoArgsConstructor
 @Slf4j
-public abstract class BaseService<T extends GeneratableId<Integer>> {
+public abstract class BaseStorage<T extends GeneratableId<Integer>> {
 
-    @Autowired
-    protected FilmUserMapper mapper;
     protected List<T> items = new ArrayList<>();
     private Integer idGenerate = 0;
 
@@ -42,5 +37,11 @@ public abstract class BaseService<T extends GeneratableId<Integer>> {
     public void reset() {
         items.clear();
         idGenerate = 0;
+    }
+
+    protected void replace(T oldItem, T newItem) {
+        log.info("Замена объекта");
+        items.remove(oldItem);
+        items.add(newItem);
     }
 }

@@ -6,7 +6,9 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Класс для модели о фильмах.
@@ -20,6 +22,18 @@ public class Film implements GeneratableId<Integer> {
     private String description;
     private LocalDate releaseDate;
     private BigDecimal duration;
+    private Set<Integer> likes;
+
+    public Set<Integer> getLikes() {
+        if (likes == null) {
+            likes = new HashSet<>();
+        }
+        return likes;
+    }
+
+    public Integer getLikesCount() {
+        return getLikes().size();
+    }
 
     @Override
     public boolean equals(Object o) {
