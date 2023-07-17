@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.api.dto.UserDtoForRead;
 import ru.yandex.practicum.filmorate.exeption.BadRequestException;
@@ -12,13 +12,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserFriendService {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    protected FilmUserMapper mapper;
+    private final UserService userService;
 
     public List<UserDtoForRead> getUsersFriends(Integer id1) {
         return userService.getUsers(id1)

@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.api.dto.FilmDtoForRead;
 import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
@@ -12,16 +12,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FilmLikesService {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private FilmService filmService;
-
-    @Autowired
-    protected FilmUserMapper mapper;
+    private final UserService userService;
+    private final FilmService filmService;
+    private final FilmUserMapper mapper;
 
     public List<FilmDtoForRead> getLikesFilm(Integer count) {
         return mapper.toFilmDtoForReadList(filmService.getAllFilms()
