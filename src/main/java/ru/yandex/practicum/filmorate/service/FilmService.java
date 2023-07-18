@@ -1,10 +1,13 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.api.dto.FilmDtoForAdd;
 import ru.yandex.practicum.filmorate.api.dto.FilmDtoForRead;
+import ru.yandex.practicum.filmorate.entity.FilmStorage;
 import ru.yandex.practicum.filmorate.exeption.BadRequestException;
 import ru.yandex.practicum.filmorate.exeption.ResourceAlreadyExistExeption;
 import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
@@ -19,23 +22,44 @@ import java.util.List;
  */
 @Service
 @Getter
+@Setter
 @Slf4j
-public class FilmService extends BaseService<Film> {
+public class FilmService {
 
+    @Autowired
+    private FilmUserMapper mapper;
+
+    @Autowired
+    private FilmStorage storage;
     private static final String DATE_CONST = "1895-12-28";
     private static final LocalDate DATE_FILM =
             LocalDate.parse(DATE_CONST, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
     private boolean checkFilmName(String filmName) {
-        return items.stream().map(Film::getName).noneMatch(filmName::equals);
+        return storage.getAll().stream().map(Film::getName).noneMatch(filmName::equals);
     }
 
     private boolean checkDateFilm(LocalDate filmDate) {
         return DATE_FILM.isBefore(filmDate);
     }
 
-    public List<FilmDtoForRead> getAllFilms() {
-        return mapper.toFilmDtoForReadList(items);
+    public List<FilmDtoForRead> getAllFilmsDto() {
+        return mapper.toFilmDtoForReadList(storage.getAll());
+    }
+
+    public List<Film> getAllFilms() {
+        return storage.getAll();
+    }
+
+    public FilmDtoForRead getFilmsDto(Integer id) {
+        return storage.getById(id)
+                .map(mapper::toFilmDtoForRead)
+                .orElseThrow(() -> new ResourceNotFoundException("Такого фильма нет"));
+    }
+
+    public Film getFilms(Integer id) {
+        return storage.getById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Такого фильма нет"));
     }
 
     public FilmDtoForRead addFilm(FilmDtoForAdd filmDto) {
@@ -44,7 +68,7 @@ public class FilmService extends BaseService<Film> {
                throw new BadRequestException(String.format("Дата не должна быть ранее %s", DATE_CONST));
             }
             Film film = mapper.filmDtoForAddToFilm(filmDto);
-            add(film);
+            storage.add(film);
             return mapper.toFilmDtoForRead(film);
         } else {
             throw new ResourceAlreadyExistExeption("Такой фильм уже есть в списке");
@@ -55,14 +79,18 @@ public class FilmService extends BaseService<Film> {
         if (!checkDateFilm(filmDtoForRead.getReleaseDate())) {
             throw new BadRequestException(String.format("Дата не должна быть ранее %s", DATE_CONST));
         }
-        Film updatedFilm = getItem(filmDtoForRead.getId())
-                .map(film -> {
-                    items.remove(film);
-                    return mapper.filmDtoForReadToFilm(filmDtoForRead);
-                })
+        Film found = storage.getById(filmDtoForRead.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Нет такого фильма"));
-        items.add(updatedFilm);
+        storage.replace(found, mapper.filmDtoForReadToFilm(filmDtoForRead));
         log.info("Обновлен фильм: {}", filmDtoForRead.getName());
         return filmDtoForRead;
     }
+
+    public void deleteFilm(Integer id) {
+        Film film = storage.getById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Такого фильма нет"));
+        log.info("Удален фильм {}", film.getName());
+        storage.remove(film);
+    }
+
 }

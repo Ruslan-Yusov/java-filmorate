@@ -9,6 +9,9 @@ import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
+/**
+ * DTO.
+ */
 @AllArgsConstructor
 @Builder
 @Getter
