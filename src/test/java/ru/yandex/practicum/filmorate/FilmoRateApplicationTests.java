@@ -21,13 +21,17 @@ import static org.assertj.core.api.Assertions.assertThat;
         }
 )
 class FilmoRateApplicationTests {
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private UserService userService;
+
     private static final LocalDate DATE_HAMSTER = LocalDate.parse("1987-08-04", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
     @Test
-    public void testFindUserById() {
+    void testFindUserById() {
         UserDtoForAdd userDto = UserDtoForAdd.builder()
                 .email("byte@yandex.ru")
                 .login("hamsterbyte1919")
