@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,16 +11,14 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 /**
  * DTO фильма для чтения и обновления.
  */
 @Data
 @AllArgsConstructor
-@JsonInclude(value = NON_EMPTY)
 @Builder
 public class FilmDtoForRead {
     @Positive
@@ -33,8 +30,11 @@ public class FilmDtoForRead {
     @Past(message = "Дата релиза не должна быть в будущем")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
-    @Positive(message = "Длинна фильма должна быть положительной")
-    private Double duration;
+    @Positive(message = "Длина фильма должна быть положительной")
+    private Integer duration;
+    private List<SimpleDto> genres;
+
+    private SimpleDto mpa;
 
     @Override
     public boolean equals(Object o) {

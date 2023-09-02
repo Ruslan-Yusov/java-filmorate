@@ -40,7 +40,7 @@ public class UserController {
             @RequestBody @Validated UserDtoForAdd user
     ) {
         log.info("Вызван метод PostUsers");
-        return userService.addUsers(user);
+        return userService.addUser(user);
     }
 
     @PutMapping("/users")

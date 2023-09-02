@@ -22,6 +22,11 @@ public class FilmController {
     private final FilmService filmService;
     private final FilmLikesService filmLikesService;
 
+    @GetMapping("/echo")
+    public String echo() {
+        return "Ok";
+    }
+
     @GetMapping("/films")
     public List<FilmDtoForRead> allFilms() {
         log.info("Вызван метод GetFilms");
