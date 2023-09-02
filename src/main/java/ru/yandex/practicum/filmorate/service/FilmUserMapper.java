@@ -30,9 +30,9 @@ public interface FilmUserMapper {
 
     UserEntity userDtoForAddToUserEntity(UserDtoForAdd value);
 
-    DictionaryDto mpaEtityToDictionaryDto (MpaEntity value);
+    DictionaryDto mpaEtityToDictionaryDto(MpaEntity value);
 
-    DictionaryDto genreEntityToDictionaryDto (GenreEntity value);
+    DictionaryDto genreEntityToDictionaryDto(GenreEntity value);
 
     SimpleDto genreEntityToDto(GenreEntity value);
 
