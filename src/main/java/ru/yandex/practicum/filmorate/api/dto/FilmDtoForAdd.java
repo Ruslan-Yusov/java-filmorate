@@ -11,6 +11,7 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,8 +28,12 @@ public class FilmDtoForAdd {
     @Past(message = "Дата релиза не должна быть в будущем")
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
-    @Positive(message = "Длинна фильма должна быть положительной")
+    @Positive(message = "Длина фильма должна быть положительной")
     private Double duration;
+
+    private List<SimpleDto> genres;
+
+    private SimpleDto mpa;
 
     @Override
     public boolean equals(Object o) {

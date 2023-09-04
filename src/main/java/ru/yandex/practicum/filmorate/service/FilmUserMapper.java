@@ -1,12 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.mapstruct.Mapper;
-import ru.yandex.practicum.filmorate.api.dto.FilmDtoForAdd;
-import ru.yandex.practicum.filmorate.api.dto.FilmDtoForRead;
-import ru.yandex.practicum.filmorate.api.dto.UserDtoForAdd;
-import ru.yandex.practicum.filmorate.api.dto.UserDtoForRead;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.api.dto.*;
+import ru.yandex.practicum.filmorate.dao.entity.FilmEntity;
+import ru.yandex.practicum.filmorate.dao.entity.GenreEntity;
+import ru.yandex.practicum.filmorate.dao.entity.MpaEntity;
+import ru.yandex.practicum.filmorate.dao.entity.UserEntity;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,19 +16,25 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface FilmUserMapper {
 
-    List<FilmDtoForRead> toFilmDtoForReadList(Collection<Film> value);
+    List<FilmDtoForRead> entityToFilmDtoForReadList(Collection<FilmEntity> value);
 
-    FilmDtoForRead toFilmDtoForRead(Film value);
+    FilmDtoForRead entityToFilmDtoForRead(FilmEntity value);
 
-    Film filmDtoForAddToFilm(FilmDtoForAdd value);
+    FilmEntity filmDtoForAddToFilmEntity(FilmDtoForAdd value);
 
-    Film filmDtoForReadToFilm(FilmDtoForRead value);
+    List<UserDtoForRead> entityToUserDtoForReadList(Collection<UserEntity> value);
 
-    List<UserDtoForRead> toUserDtoForReadList(Collection<User> value);
+    UserDtoForRead entityToUserDtoForRead(UserEntity value);
 
-    UserDtoForRead toUserDtoForRead(User value);
+    UserEntity userDtoForReadToUserEntity(UserDtoForRead value);
 
-    User userDtoForReadToUser(UserDtoForRead value);
+    UserEntity userDtoForAddToUserEntity(UserDtoForAdd value);
 
-    User userDtoForAddToUser(UserDtoForAdd value);
+    DictionaryDto mpaEtityToDictionaryDto(MpaEntity value);
+
+    DictionaryDto genreEntityToDictionaryDto(GenreEntity value);
+
+    SimpleDto genreEntityToDto(GenreEntity value);
+
+    SimpleDto mpaEntityToDto(MpaEntity value);
 }

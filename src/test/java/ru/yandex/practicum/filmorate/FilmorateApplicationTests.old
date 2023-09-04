@@ -10,17 +10,12 @@ import ru.yandex.practicum.filmorate.api.dto.FilmDtoForAdd;
 import ru.yandex.practicum.filmorate.api.dto.FilmDtoForRead;
 import ru.yandex.practicum.filmorate.api.dto.UserDtoForAdd;
 import ru.yandex.practicum.filmorate.api.dto.UserDtoForRead;
-import ru.yandex.practicum.filmorate.entity.FilmStorage;
-import ru.yandex.practicum.filmorate.entity.UserStorage;
 import ru.yandex.practicum.filmorate.exeption.BadRequestException;
 import ru.yandex.practicum.filmorate.exeption.ResourceAlreadyExistExeption;
 import ru.yandex.practicum.filmorate.exeption.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.FilmLikesService;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.UserFriendService;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -87,8 +82,8 @@ class FilmorateApplicationTests {
         expectetUserDtoForRead = UserDtoForRead.builder().id(1).email("byte@yandex.ru").login("hamsterbyte1919").name("Byte").birthday(DATE_HAMSTER).build();
 
         expectetUpdateUserDtoForUpdate = UserDtoForRead.builder().id(1).email("byte@mail.ru").login("hamsterbyte1919").name("Byte").birthday(DATE_HAMSTER).build();
-        filmStorage.reset();
-        userStorage.reset();
+        filmStorage.deleteAll();
+        userStorage.deleteAll();
     }
 
     @Test
@@ -100,7 +95,7 @@ class FilmorateApplicationTests {
         Assertions.assertNotNull(variable);
         Assertions.assertEquals(expectetFilmDtoForRead, variable);
 
-        List<Film> innerList = filmStorage.getAll();
+        List<Film> innerList = filmStorage.findAll();
         Assertions.assertNotNull(innerList);
         Assertions.assertNotEquals(0, innerList.size());
         Assertions.assertEquals(expectetFilm, innerList.get(0));
@@ -134,10 +129,10 @@ class FilmorateApplicationTests {
     @DisplayName("Тест на удаление фильма")
     void testDeleteFilms() {
         FilmDtoForRead variable = filmService.addFilm(expectetFilmDtoForAdd);
-        Assertions.assertEquals(1, filmStorage.getAll().size());
+        Assertions.assertEquals(1, filmStorage.findAll().size());
         Assertions.assertThrows(ResourceNotFoundException.class, () -> filmService.deleteFilm(2));
         filmService.deleteFilm(1);
-        Assertions.assertEquals(0, filmStorage.getAll().size());
+        Assertions.assertEquals(0, filmStorage.findAll().size());
     }
 
     @Test
@@ -149,7 +144,7 @@ class FilmorateApplicationTests {
         Assertions.assertNotNull(variable);
         Assertions.assertEquals(expectetUserDtoForRead, variable);
 
-        List<User> innerList = userStorage.getAll();
+        List<User> innerList = userStorage.findAll();
         Assertions.assertNotNull(innerList);
         Assertions.assertNotEquals(0, innerList.size());
         Assertions.assertEquals(expectetUser, innerList.get(0));
@@ -193,10 +188,10 @@ class FilmorateApplicationTests {
     @DisplayName("Тест на удаление пользователя")
     void testDeleteUser() {
         UserDtoForRead variable = userService.addUsers(expectetUserDtoForAdd);
-        Assertions.assertEquals(1, userStorage.getAll().size());
+        Assertions.assertEquals(1, userStorage.findAll().size());
         Assertions.assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(2));
         userService.deleteUser(1);
-        Assertions.assertEquals(0, userStorage.getAll().size());
+        Assertions.assertEquals(0, userStorage.findAll().size());
     }
 
     @Test
@@ -208,7 +203,7 @@ class FilmorateApplicationTests {
         expectetUserDtoForAdd.setEmail("homaTest2@yandex.ru");
         UserDtoForRead variable3 = userService.addUsers(expectetUserDtoForAdd);
 
-        Assertions.assertEquals(3, userStorage.getAll().size());
+        Assertions.assertEquals(3, userStorage.findAll().size());
         userFriendService.addFriend(variable1.getId(), variable2.getId());
         Assertions.assertEquals(1, userFriendService.getUsersFriends(1).size());
         Assertions.assertEquals(1, userFriendService.getUsersFriends(2).size());
